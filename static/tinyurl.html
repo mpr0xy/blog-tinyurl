@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<style type="text/css">
+  #main {
+    width: 900px;
+    margin: 6em auto;
+  }
+  .url-btn {
+    display: block;
+    float: right;
+  }
+</style>
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="main">
+  <textarea id="context" rows="30" cols="90">
+  </textarea>
+  <button class="url-btn" type="button">Make tinyUrl Now!</button>
+</div>
+
+
+<script language="javascript">
+
+  /*$.getJSON('http://localhost:8080/tinyurl', 
+    {
+      url: 'https://www.google.co.uk/search?newwindow=1&biw=1366&bih=656&q=jquery+getjson&btnG=Google+%E6%90%9C%E7%B4%A2'
+    },
+    function(data){
+      console.log(JSON.parse(data));
+    }
+  );*/
+  Array.prototype.unique2 = function(){
+    this.sort();  //先排序
+    var res = [this[0]];
+    for(var i = 1; i < this.length; i++){
+      if(this[i] !== res[res.length - 1]){
+        res.push(this[i]);
+      }
+    }
+    return res;
+  }
+  window.addEventListener('paste', function(event){
+    event.preventDefault();
+    var data = event.clipboardData.getData('text/html');
+    // console.log(data);
+    $('#context').val(data);
+  });
+
+  $('.url-btn').click(function(){
+    var reHttp = /"[a-zA-z]+:\/\/[^"]*"/g;
+    var context = $('#context').val();
+    var arrMactches = context.match(reHttp);
+    arrMactches = arrMactches.unique2();
+    if (!arrMactches){
+      return false;
+    }
+    console.log(arrMactches);
+    for (var i=0; i < arrMactches.length ; i++)
+    {
+      longurl = arrMactches[i].replace(/\"/g, "");
+      $.getJSON('http://localhost:8080/tinyurl', 
+        {
+          url: longurl
+        },
+        function(data){
+          tinyurl = JSON.parse(data).tinyurl;
+          longurl = JSON.parse(data).longurl;
+          console.log(longurl);
+          console.log(tinyurl);
+          var context = $('#context').val();
+          context = context.replace(new RegExp(longurl, 'g'), tinyurl);
+          $('#context').val(context);
+        }
+      ); 
+      // console.log(longurl); 
+    }
+  });
+
+  
+</script>
+</body>
+</html>

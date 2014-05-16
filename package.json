@@ -1,0 +1,12 @@
+{
+  "name": "blog tinyurl",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "restify": "latest",
+    "request": "latest"
+  }
+}
